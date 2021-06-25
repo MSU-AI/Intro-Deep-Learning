@@ -106,7 +106,21 @@ def create_network(x_train, y_train):
     Task: Create a Neural Network with x_train as input and y_train as output
     Hint: Use tensorflow's Sequential() for the NN and Dense() for each layer.
     '''
-    pass
+    try:
+        model = load_model('model.h5')
+    except:
+        model = Sequential()
+        model.add(Dense(800, input_shape = (len(x_train[0]),), activation="relu"))
+        model.add(Dense(400, activation="relu"))
+        model.add(Dense(1, activation='sigmoid'))
+        
+        model.compile(loss="binary_crossentropy", metrics = ["accuracy"])
+        
+        model.fit(x_train, y_train, epochs=8, batch_size = 100)
+        
+        model.save('model.h5')
+        
+    return model
 
 
 def main():
@@ -148,7 +162,7 @@ def main():
     user_text = input('Input the text: ')
     prediction = model.predict(cv.transform([user_text]))[0]
     print('Spam level: {:.2%}'.format(prediction[0]))
-    if prediction > 0.5:
+    if prediction > 0.8:
         print('Spam!')
     else:
         print('Not spam!')
